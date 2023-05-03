@@ -1,9 +1,21 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const Post = require("./models/post");
 
 const app = express();
+
+mongoose
+  .connect(
+    "mongodb+srv://markmcnulty84:Dexxol.18@cluster0.oa2hobg.mongodb.net/node-angular?retryWrites=true&w=majority"
+  )
+  .then(() => {
+    console.log("Connected to MongoDB!!");
+  })
+  .catch(() => {
+    console.log("Connection Failed!!");
+  });
 
 app.use(bodyParser.json());
 
@@ -28,7 +40,9 @@ app.post("/api/posts", (req, res, next) => {
     title: req.body.title,
     content: req.body.content,
   });
-  console.log(post);
+
+  //The following will save it to the MongoDB collection named posts
+  post.save();
   res.status(201).json({
     message: "Post added successfully!",
   });
@@ -36,27 +50,11 @@ app.post("/api/posts", (req, res, next) => {
 
 //Handling GET Requests
 app.get("/api/posts", (req, res, next) => {
-  posts = [
-    {
-      id: "sdgsddfgr4",
-      title: "title 1",
-      content: "content 1",
-    },
-    {
-      id: "sdgr3443wesw",
-      title: "title 2",
-      content: "content 2",
-    },
-    {
-      id: "sdf344f",
-      title: "title 3",
-      content: "content 3",
-    },
-  ];
-
-  return res.status(200).json({
-    message: "posts fetched successfully",
-    posts: posts,
+  Post.find().then((dbPosts) => {
+    return res.status(200).json({
+      message: "posts fetched successfully",
+      posts: dbPosts,
+    });
   });
 });
 
