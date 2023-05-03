@@ -1,6 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const Post = require("./models/post");
+
 const app = express();
 
 app.use(bodyParser.json());
@@ -21,10 +23,14 @@ app.use((req, res, next) => {
 
 //connecting angular so that I can post data
 app.post("/api/posts", (req, res, next) => {
-  const post = req.body;
+  //new post managed by mongoose
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content,
+  });
   console.log(post);
   res.status(201).json({
-    message: "Post added!",
+    message: "Post added successfully!",
   });
 });
 
