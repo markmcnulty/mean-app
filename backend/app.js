@@ -39,9 +39,11 @@ app.post("/api/posts", (req, res, next) => {
   });
 
   //The following will save it to the MongoDB collection named posts
-  post.save();
-  res.status(201).json({
-    message: "Post added successfully!",
+  post.save().then((createdPost) => {
+    res.status(201).json({
+      message: "Post added successfully!",
+      postId: createdPost._id,
+    });
   });
 });
 
